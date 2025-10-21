@@ -29,3 +29,22 @@ What patterns are unique per venue, and what is common across all?
 How can we validate and test these patterns before they are promoted to production?
 
 Deliverable: A repository or framework of venue connection patterns represented in a declarative, Kubernetes-friendly way — forming a foundational “Venue Connectivity Pattern Library” for the organization.
+
+
+
+===================================================================================================================================================================================================
+Process: Analyse current methods to find repeatable patterns.
+Objective: Develop a Venue-based Patterns Library that will :
+
+- Streamline venue migration by creating a small number of 'boring' repeatable process
+- Integrate with the FTRP/LOCP declarative approach (meta-data) per venue
+- Enable future Kubernetes based automation by leveraging AMDB & IMDB
+- Develop a migration dashboard for the migration engineers to present the progress of venue migrations through the repeatable-patterns
+
+
+My opinion is that the "repeatable patterns" should be without process choice (other than "need to roll back because some-failure") so, the right number of repeatable patterns is as few as possible that don't have choice
+ 
+I am happy to row-back from this if it turns out that each venue has a subtle nuance that would be better as a conditional step as "100 venues with 1 pattern with a trivial conditional" is better than "100 different processes"  
+but 1 pattern will be too few if that means that the 1 pattern has a complex set of paths within it, not all of which are exercised ... 
+ 
+
