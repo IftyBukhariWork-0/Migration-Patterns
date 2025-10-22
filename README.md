@@ -46,5 +46,45 @@ My opinion is that the "repeatable patterns" should be without process choice (o
  
 I am happy to row-back from this if it turns out that each venue has a subtle nuance that would be better as a conditional step as "100 venues with 1 pattern with a trivial conditional" is better than "100 different processes"  
 but 1 pattern will be too few if that means that the 1 pattern has a complex set of paths within it, not all of which are exercised ... 
+
+
+======================================================================================================================================================================================================================================
+
+DISCUSSION:
+
+We can focus on the 80/20 model.  As such, we have TCP and UDP connectivity as the primary means.  There are others, like rrcp, SQL replication, etc., but those are such that there are only 1 or 2 venues using each.  Therefore, we probably shouldn't try to model them, for now, aside from ensuring that we have a defined network protocol type entry in the DB.
+ 
+Some venues will have multiple UDP and TCP connections -- UDP channels for data, UDP channels for recovery, TCP to request recovery, UDP for reference, etc.  So, while there are multiple such connections required, the network protocols are well defined.
+ 
+Therefore, we should probably restrict our patterns to network protocol as a pattern.  Then, a given venue can use multiple such patterns for connectivity.  That keeps it simple and reduces the number of patterns we have to consider.
+ 
+Then, for credentialling (logins), we have actual user/password, certificates, machine auth, and such.
+ 
+For security, there is TLS, custom encryption, certificates, SSL, etc.
+ 
+So, network protocols need to be: TCP, UDP, http, https, ftp, and sftp as primary connection types.
+ 
+I think web sockets is https.
+ 
+web socket can also use http.
+ 
+rrcp is a direct layer on Ethernet frames, so a peer, if you will, of tcp and udp.
+ 
+
+
+I think that will help us identify patterns to use for network connectivity.
+ 
+I'm still unable to find details about SQL replication network protocols.  I'm guessing it is TCP under the covers and SQL replication is simply layered on top of TCP using custom ports and custom users on both publisher and subscriber sides of the connection.
+ 
+If we try to combine all of those details into patterns, we'll end up with 600 patterns for 600 venues.  By breaking it down like the above, we will have probably less than 10 patterns in each of network, credentials/logins, and security, which we can use to pick and choose for given venue.  I think that simplifies this considerably.
+ 
+If we have a list, say from EMEA, of venue connectivity details, we can look to break it down this way.  Perhaps we also find another detail, say that for security, we may need to allow selection of multiple options, not just one of them -- TLS and certificates, or TLS and ACLs.
+ 
+There should not be connectivity from EMEA to AMERS, for example, at least not for real time flows into the LOCP platform.
+ 
+For cloud, perhaps as we may site a venue ingest point in EMEA, but the publisher may be in APAC.
+ 
+Those are not in view for LOCP, however.
+ 
  
 
