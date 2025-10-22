@@ -52,6 +52,23 @@ but 1 pattern will be too few if that means that the 1 pattern has a complex set
 
 DISCUSSION:
 
+The goal is to analyse existing venue connections to identify commonalities and ultimately:
+Develop a standardised taxonomy and data model
+Define a small set of reusable, declarative migration templates (“patterns”)
+Integrate these patterns into metadata-driven automation frameworks (FTRP/LOCP, AMDB, IMDB)
+ 
+Ideally, the aim is for a concise set of patterns rather than a large variety.
+ 
+I believe the necessary information exists across various teams (networks, development, operations), and John has already suggested a few key contacts:
+ 
+Andrew Krisby (Framework Lead)
+Zhe Wang (APAC Venue Team Lead)
+James Telford (EMEA Venue Team Lead)
+Eric Compton (AMER Venue Team Lead)
+
+
+That list seems like a good start as there are really only a few patterns which can be composed of layers -- network protocol, connection security requirements, exchange login requirements and similar.  Each of those has a defined pattern, so we should be able to compose a large variety of connectivity details by selecting an item from each list, as it were.
+
 We can focus on the 80/20 model.  As such, we have TCP and UDP connectivity as the primary means.  There are others, like rrcp, SQL replication, etc., but those are such that there are only 1 or 2 venues using each.  Therefore, we probably shouldn't try to model them, for now, aside from ensuring that we have a defined network protocol type entry in the DB.
  
 Some venues will have multiple UDP and TCP connections -- UDP channels for data, UDP channels for recovery, TCP to request recovery, UDP for reference, etc.  So, while there are multiple such connections required, the network protocols are well defined.
