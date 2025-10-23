@@ -50,7 +50,7 @@ but 1 pattern will be too few if that means that the 1 pattern has a complex set
 
 ======================================================================================================================================================================================================================================
 
-DISCUSSION:
+DISCUSSION / CONTEXT:
 
 The goal is to analyse existing venue connections to identify commonalities and ultimately:
 Develop a standardised taxonomy and data model
@@ -58,7 +58,9 @@ Define a small set of reusable, declarative migration templates (“patterns”)
 Integrate these patterns into metadata-driven automation frameworks (FTRP/LOCP, AMDB, IMDB)
  
 Ideally, the aim is for a concise set of patterns rather than a large variety.
- 
+
+
+RESPONSE: 
 I believe the necessary information exists across various teams (networks, development, operations), and John has already suggested a few key contacts:
  
 Andrew Krisby (Framework Lead)
