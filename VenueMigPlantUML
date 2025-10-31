@@ -1,0 +1,123 @@
+@startuml
+' -------- Visuals --------
+left to right direction
+skinparam linetype ortho
+hide circle
+
+' -------- Entities --------
+entity "Region" as Region {
+  *region_id : UUID <<PK>>
+  name : string
+  timezone : string
+}
+
+entity "Venue" as Venue {
+  *venue_id : UUID <<PK>>
+  region_id : UUID <<FK>>
+  code : string  ' e.g., CME, NYSE, LSE
+  name : string
+}
+
+entity "VenueProfile" as VenueProfile {
+  *venue_profile_id : UUID <<PK>>
+  venue_id : UUID <<FK>>
+  migration_template_id : UUID <<FK>>
+  recovery_type : enum  ' TCP | UDP | Dual
+  multicast_policy : enum  ' uni | multi | both
+  notes : text
+}
+
+entity "MigrationTemplate" as MigrationTemplate {
+  *migration_template_id : UUID <<PK>>
+  name : string
+  version : semver
+  description : text
+}
+
+entity "ConnectionPattern" as ConnPattern {
+  *connection_pattern_id : UUID <<PK>>
+  migration_template_id : UUID <<FK>>
+  name : string        ' e.g., MarketData, Recovery, RefData
+  purpose : string
+}
+
+entity "ApplicationPattern" as AppPattern {
+  *app_pattern_id : UUID <<PK>>
+  layer : "L5–L7"
+  protocol_hint : string  ' HTTP/S, WSS, MQ, DB feed, etc.
+  qos : string?           ' optional
+}
+
+entity "NetworkPattern" as NetPattern {
+  *net_pattern_id : UUID <<PK>>
+  layer : "L1–L4"
+  transport : enum  ' TCP | UDP
+  unicast_multicast : enum  ' uni | multi
+  port_strategy : string
+}
+
+entity "NetworkProfile" as NetProfile {
+  *net_profile_id : UUID <<PK>>
+  mtu : int?
+  dscp_qos : string?
+  bandwidth_cap : string?
+}
+
+entity "SecurityProfile" as SecProfile {
+  *sec_profile_id : UUID <<PK>>
+  tls_required : bool
+  firewall_policy : string?
+  cert_ref : string?
+}
+
+entity "CredentialProfile" as CredProfile {
+  *cred_profile_id : UUID <<PK>>
+  account_ref : string
+  rotation_policy : string?
+  vault_path : string?
+}
+
+entity "ConnectionInstance" as ConnInstance {
+  *connection_instance_id : UUID <<PK>>
+  venue_id : UUID <<FK>>
+  connection_pattern_id : UUID <<FK>>
+  status : enum  ' Draft | Pending | Applied | Failed | RolledBack
+  effective_config : json
+}
+
+entity "IntegrationSource (AMDB/IMDB)" as Source {
+  *source_id : UUID <<PK>>
+  name : string
+  type : enum  ' AMDB | IMDB | Other
+}
+
+entity "VenueMigrationPattern" as VenueMig {
+  *venue_migration_id : UUID <<PK>>
+  venue_id : UUID <<FK>>
+  snapshot_version : semver
+  created_at : datetime
+}
+
+' -------- Relationships (Crow’s-Foot) --------
+Region ||--o{ Venue : has
+Venue  ||--|| VenueProfile : "1 uses 1"
+MigrationTemplate ||--o{ VenueProfile : "referenced by"
+
+MigrationTemplate ||--o{ ConnPattern : "includes"
+ConnPattern ||--|| AppPattern : "uses"
+ConnPattern ||--|| NetPattern : "uses"
+
+' Profiles are reusable libraries; optional at pattern-level (can be overridden at instantiation)
+ConnPattern |o--|| NetProfile : "uses"
+ConnPattern |o--|| SecProfile : "uses"
+ConnPattern |o--|| CredProfile : "uses"
+
+' Instantiation for a specific venue
+Venue ||--o{ ConnInstance : "owns"
+ConnPattern ||--o{ ConnInstance : "instantiates"
+Source ||--o{ ConnInstance : "parameterizes from"
+
+' Aggregate applied state for a venue
+Venue ||--|| VenueMig : "has 1 active*"
+VenueMig ||--o{ ConnInstance : "comprises"
+@enduml
